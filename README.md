@@ -1,5 +1,5 @@
 # ERKmodel_v1
-Implementation of an ODE ERK model from Sturm et al, Science Signaling 2010 in MATLAB.
+Implementation of an ODE ERK model from [Sturm et al, Science Signaling](http://stke.sciencemag.org/content/3/153/ra90) 2010 in MATLAB.
 
 To use:
 Download and unpack .zip file. Navigate to this folder in your open session of MATLAB, or add it to your MATLAB path.
@@ -17,6 +17,6 @@ _ "erkInitialize.m", "erkODE.m", and "erkSimulate.m" are the core model function
 - remaining files are related to spreadsheet update functionality: if you want to change default model equations or
   parameters, you can make the changes in "ERK reactions.xlsx", then run (in the MATLAB command line)
   
-    updateModel('Erk reactions.xlsx'); % this will update the core model files.
+    `updateModel('Erk reactions.xlsx'); % this will update the core model files`
   
-  Note: there are known issues with this functionality for versions of MATLAB prior to R2015b.
+  Note: there are known issues with the updateModel functionality for versions of MATLAB prior to R2015b.
