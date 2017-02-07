@@ -17,5 +17,6 @@ _ "erkInitialize.m", "erkODE.m", and "erkSimulate.m" are the core model function
 - remaining files are related to spreadsheet update functionality: if you want to change default model equations or
   parameters, you can make the changes in "ERK reactions.xlsx", then run (in the MATLAB command line)
   
-  updateModel('Erk reactions.xlsx'); % this will update the core model files.
+    updateModel('Erk reactions.xlsx'); % this will update the core model files.
+  
   Note: there are known issues with this functionality for versions of MATLAB prior to R2015b.
