@@ -1,10 +1,12 @@
 %% Looking at extrinsic variation: 500 single-cell draws
-init_val = 22100000; % Default values for ERK/MEK molecules
-num = 500; % Number of simulations
+init_val = 22100000*(10^-0.25); % Default values for ERK/MEK molecules - adjusted to match dynamics of MF10A cells
+num = 1024; % Number of simulations
 sim_time = 120;
 
-unpaired_dist = init_val*10.^normrnd(0, 0.2, [2, num]);
-all_doses = exp(7:.25:10); % Model perturbation: elevated RasGTP (should be in the neihborhood of 2000-20000 molecules)
+% MEK/ERK distribution: log2-normal, CV = 0.04
+unpaired_dist = normrnd(log(init_val)/log(2), log(init_val)/log(2)*0.04, [2, num]);
+unpaired_dist = 2.^unpaired_dist; %Transform back into "real values"
+all_doses = exp(7:.25:9); % Model perturbation: elevated RasGTP (should be in the neihborhood of 2000-20000 molecules)
 
 erk_unpaired = zeros(num,sim_time*60+1,length(all_doses));
 
