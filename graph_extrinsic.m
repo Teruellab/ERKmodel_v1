@@ -8,9 +8,6 @@ for idx = 1:13
     erk1 = squeeze(erk_paired(:,:,idx));
     erk2 = squeeze(erk_unpaired(:,:,idx));
 
-
-
-
     % - - - HEATMAPS - - - - - - - - - - - - 
 %     graph_lim = prctile([erk1(:);erk2(:)],[2 99]);
 %     [~,ord1] = sort(sum(erk1(:,1:1000),2),'descend');
