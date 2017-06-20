@@ -1,82 +1,79 @@
-% General modeling parameters
-num = 1024; % Number of "single-cell" simulations
+%% Looking at extrinsic variation: multiple single-cell draws with log-normally distributed behavior
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+num = 1024; % Number of simulations
 sim_time = 120;
-all_doses = exp(7:.25:10); % Model perturbation: elevated RasGTP (should be in the neihborhood of 2000-20000 molecules)
-
-% Get all pairwise combinations of steady-state species
-all_species = {'Raf','Phase1','MEK','Phase2','ERK','Phase3','Phase4'};
-all_init = [40000 40000 21000000 400000 22100000 10000000 40000];
-combos = nchoosek(1:length(all_init),2);
+ras_doses = exp(7:.25:9); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
-all_erk_unpaired = cell(size(combos,1),1);
-all_erk_paired = cell(size(combos,1),1);
-all_distr1 = cell(size(combos,1),1);
-all_distr2 = cell(size(combos,1),1);
+% Generate distributions for each fixed species in the model
+%        Species   Mean       CV
+inits = {'Raf'     40000      .04
+         'Phase1'  40000      .04
+         'MEK'     21000000   .04
+         'Phase2'  400000     .04
+         'ERK'     21000000   .04
+         'Phase3'  10000000   .04
+         'Phase4'  40000      .04
+};
+init_dist = [];
+for i = 1:size(inits,1)
+    init_dist = cat(1,init_dist, normrnd(log(inits{i,2})/log(2), log(inits{i,2})/log(2)*inits{i,3}, [1, num]));
+end
+init_dist = 2.^init_dist; % Undo log transform
+% Reorder MEK/ERK levels to correlate them
+init_paired = init_dist;
+init_paired(5,:) = sort(init_paired(5,:),'ascend');
+init_paired(3,:) = sort(init_paired(3,:),'ascend');
 
-%%
-for z = 1:size(combos,1)
-    p_idx1 = combos(z,1);
-    p_idx2 = combos(z,2);
-    
-    % Generate according distributions for the two species being compared.
-    distr1 = normrnd(log(all_init(p_idx1))/log(2), log(all_init(p_idx1))/log(2)*0.04, [1, num]);
-    distr1 = 2.^distr1; %Transform back into "real values"
-    distr2 = normrnd(log(all_init(p_idx2))/log(2), log(all_init(p_idx2))/log(2)*0.04, [1, num]);
-    distr2 = 2.^distr2; %Transform back into "real values"
 
-    % 1) Simulate UNPAIRED parameters - keep randomized order from distributions.
-    erk{z} = zeros(num,sim_time*60+1,length(all_doses));
-    parfor i = 1:num
-        p_mod = [];
-        names = {'ERKpp'};
-        options = struct;
-        options.DEBUG = 0;
-        options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
-        init_mod = {all_species{p_idx1},distr1(i); all_species{p_idx2}, distr2(i)};
+erk_unpaired = zeros(num,sim_time*60+1,length(ras_doses)); % Variable to hold simulation output
+% Run dose response for each individual
+parfor i = 1:num
+    p_mod = [];
+    names = {'ERKpp'};
+    options = struct;
+    options.DEBUG = 0;
+    options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
+    init_mod = inits(:,1:2);
+    init_mod(:,2) = num2cell(init_dist(:,i));
         % Simulate all doses (only need to equilibrate on first iteration)
-        output = [];
-        for j = 1:length(all_doses)
-            if isempty(output)
-                [t,x,simdata] = erkSimulate({'RasGTP',all_doses(j)},names, p_mod, init_mod,options);
-            else
-                options.STEADY_STATE = simdata.STEADY_STATE;
-                [~,x] = erkSimulate({'RasGTP',all_doses(j)}, names, p_mod, init_mod,options);
-            end
-            output = cat(3,output,x(:)');
+    output = [];
+    for j = 1:length(ras_doses)
+        if isempty(output)
+            [t,x,simdata] = erkSimulate({'RasGTP',ras_doses(j)},names, p_mod, init_mod, options);
+        else
+            options.STEADY_STATE = simdata.STEADY_STATE;
+            [~,x] = erkSimulate({'RasGTP',ras_doses(j)}, names, p_mod, init_mod,options);
         end
-        erk(i,:,:) = output;
+        output = cat(3,output,x(:)');
     end
-    all_erk_unpaired{z} = erk;
-    all_distr1{z} = distr1;
-    all_distr2{z} = distr2;
-    
-    % 2) Simulate PAIRED parameters - sort distr1 and distr2 in ascending order, forcing perfect Spearman correlation.
-    distr1 = sort(distr1,'ascend');
-    distr2 = sort(distr2,'ascend');
-    erk{z} = zeros(num,sim_time*60+1,length(all_doses));
-    parfor i = 1:num
-        p_mod = [];
-        names = {'ERKpp'};
-        options = struct;
-        options.DEBUG = 0;
-        options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
-        init_mod = {all_species{p_idx1},distr1(i); all_species{p_idx2}, distr2(i)};
-        % Simulate all doses (only need to equilibrate on first iteration)
-        output = [];
-        for j = 1:length(all_doses)
-            if isempty(output)
-                [t,x,simdata2] = erkSimulate({'RasGTP',all_doses(j)},names, p_mod, init_mod,options);
-            else
-                options.STEADY_STATE = simdata2.STEADY_STATE;
-                [~,x] = erkSimulate({'RasGTP',all_doses(j)}, names, p_mod, init_mod,options);
-            end
-            output = cat(3,output,x(:)');
-        end
-        erk(i,:,:) = output;
-    end
-    all_erk_paired{z} = erk;
+    erk_unpaired(i,:,:) = output;
+end
 
-    
-    
+
+
+erk_paired = zeros(num,sim_time*60+1,length(ras_doses)); % Variable to hold simulation output
+% Run dose response for each individual
+parfor i = 1:num
+    p_mod = [];
+    names = {'ERKpp'};
+    options = struct;
+    options.DEBUG = 0;
+    options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
+    init_mod = inits(:,1:2);
+    init_mod(:,2) = num2cell(init_paired(:,i));
+        % Simulate all doses (only need to equilibrate on first iteration)
+    output = [];
+    for j = 1:length(ras_doses)
+        if isempty(output)
+            [t,x,simdata2] = erkSimulate({'RasGTP',ras_doses(j)},names, p_mod, init_mod, options);
+        else
+            options.STEADY_STATE = simdata2.STEADY_STATE;
+            [~,x] = erkSimulate({'RasGTP',ras_doses(j)}, names, p_mod, init_mod,options);
+        end
+        output = cat(3,output,x(:)');
+    end
+    erk_paired(i,:,:) = output;
 end
