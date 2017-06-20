@@ -1,8 +1,9 @@
 %% Looking at extrinsic variation: multiple single-cell draws with log-normally distributed behavior
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-num = 1024; % Number of simulations
-sim_time = 120;
+num = 5; % Number of simulations
+sim_time = 120; % Total length of simulation (minutes)
+sim_interval = 15; % Time resoluition of simulation (seconds)
 ras_doses = exp(7:.25:11); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -13,7 +14,7 @@ inits = {'Raf'     40000      .04
          'Phase1'  40000      .04
          'MEK'     21000000   .04
          'Phase2'  400000     .04
-         'ERK'     21000000   .04
+         'ERK'     21000000*2 .04
          'Phase3'  10000000   .04
          'Phase4'  40000      .04
 };
@@ -28,13 +29,14 @@ init_paired(5,:) = sort(init_paired(5,:),'ascend');
 init_paired(3,:) = sort(init_paired(3,:),'ascend');
 
 
-erk_unpaired = zeros(num,sim_time*60+1,length(ras_doses)); % Variable to hold simulation output
+erk_unpaired = zeros(num,sim_time*60/sim_interval+1,length(ras_doses)); % Variable to hold simulation output
 % Run dose response for each individual
 parfor i = 1:num
     p_mod = [];
     names = {'ERKpp'};
     options = struct;
     options.DEBUG = 0;
+    options.DT = sim_interval; % Time resolution 
     options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
     init_mod = inits(:,1:2);
     init_mod(:,2) = num2cell(init_dist(:,i));
@@ -54,13 +56,14 @@ end
 
 
 
-erk_paired = zeros(num,sim_time*60+1,length(ras_doses)); % Variable to hold simulation output
+erk_paired = zeros(num,sim_time*60/sim_interval+1,length(ras_doses)); % Variable to hold simulation output
 % Run dose response for each individual
 parfor i = 1:num
     p_mod = [];
     names = {'ERKpp'};
     options = struct;
     options.DEBUG = 0;
+    options.DT = sim_interval; % Time resolution 
     options.SIM_TIME = 60*sim_time; % Total simulation time (in seconds)
     init_mod = inits(:,1:2);
     init_mod(:,2) = num2cell(init_paired(:,i));
