@@ -3,7 +3,7 @@
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 num = 1024; % Number of simulations
 sim_time = 120;
-ras_doses = exp(7:.25:9); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
+ras_doses = exp(7:.25:11); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 

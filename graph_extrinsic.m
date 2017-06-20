@@ -1,28 +1,30 @@
 if ~exist('erk_paired','var')
     load('/Volumes/labdata/brooks/Data/erk_sim.mat')
 end
+
+%%
 setcolors;
 loadcolormaps;
 %%
-for idx = 1:13
+for idx = 1:size(erk_paired,3)
     erk1 = squeeze(erk_paired(:,:,idx));
     erk2 = squeeze(erk_unpaired(:,:,idx));
 
     % - - - HEATMAPS - - - - - - - - - - - - 
-%     graph_lim = prctile([erk1(:);erk2(:)],[2 99]);
-%     [~,ord1] = sort(sum(erk1(:,1:1000),2),'descend');
-%     [~,ord2] = sort(sum(erk2(:,1:1000),2),'descend');
-%     figure('Position',positionfig(1000,400));
-%     ha = tight_subplot(1,2,0.05 ,[0.15 .1]);
-%     imagesc(erk1(ord1,:),'Parent',ha(1)), set(ha(1),'CLim',graph_lim)
-%     imagesc(erk2(ord2,:),'Parent',ha(2)), set(ha(2),'CLim',graph_lim)
-%     colormap(colormaps.viridis)
-%     title(ha(1),'Paired ERK and MEK')
-%     title(ha(2),'Unpaired')
-%     for i = 1:length(ha)
-%         set(ha(i),'YTick',[],'XTick',1:3600:7201, 'XTickLabel',{'0','1','2'})
-%         xlabel(ha(i),'Time (hrs)')
-%     end
+    graph_lim = prctile([erk1(:);erk2(:)],[2 99]);
+    [~,ord1] = sort(sum(erk1(:,1:1000),2),'descend');
+    [~,ord2] = sort(sum(erk2(:,1:1000),2),'descend');
+    figure('Position',positionfig(1000,400));
+    ha = tight_subplot(1,2,0.05 ,[0.15 .1]);
+    imagesc(erk1(ord1,:),'Parent',ha(1)), set(ha(1),'CLim',graph_lim)
+    imagesc(erk2(ord2,:),'Parent',ha(2)), set(ha(2),'CLim',graph_lim)
+    colormap(colormaps.viridis)
+    title(ha(1),'Paired ERK and MEK')
+    title(ha(2),'Unpaired')
+    for i = 1:length(ha)
+        set(ha(i),'YTick',[],'XTick',1:3600:7201, 'XTickLabel',{'0','1','2'})
+        xlabel(ha(i),'Time (hrs)')
+    end
     
 % - - POPULATION AVERAGES - - - - 
     figure('Position',positionfig(1000,400));
