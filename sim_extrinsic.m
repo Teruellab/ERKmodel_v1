@@ -4,13 +4,13 @@ num = 5; % Number of simulations
 sim_time = 120;
 
 %        Species   Mean       CV
-inits = {'Raf'     40000      .04
-         'Phase1'  40000      .04
-         'MEK'     21000000   .04
-         'Phase2'  400000     .04
-         'ERK'     21000000   .04
-         'Phase3'  10000000   .04
-         'Phase4'  40000      .04
+inits = {'Raf'     40000      .1
+         'Phase1'  40000      .1
+         'MEK'     21000000   .1
+         'Phase2'  400000     .1
+         'ERK'     21000000   .1
+         'Phase3'  10000000   .1
+         'Phase4'  40000      .1
 };
 
 init_dist = [];

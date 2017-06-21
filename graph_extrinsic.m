@@ -10,40 +10,56 @@ for idx = 1:size(erk_paired,3)
     erk1 = squeeze(erk_paired(:,:,idx));
     erk2 = squeeze(erk_unpaired(:,:,idx));
 
-    % - - - HEATMAPS - - - - - - - - - - - - 
-    graph_lim = prctile([erk1(:);erk2(:)],[2 99]);
-    [~,ord1] = sort(sum(erk1(:,1:1000),2),'descend');
-    [~,ord2] = sort(sum(erk2(:,1:1000),2),'descend');
-    figure('Position',positionfig(1000,400));
-    ha = tight_subplot(1,2,0.05 ,[0.15 .1]);
-    imagesc(erk1(ord1,:),'Parent',ha(1)), set(ha(1),'CLim',graph_lim)
-    imagesc(erk2(ord2,:),'Parent',ha(2)), set(ha(2),'CLim',graph_lim)
-    colormap(colormaps.viridis)
-    title(ha(1),'Paired ERK and MEK')
-    title(ha(2),'Unpaired')
-    for i = 1:length(ha)
-        set(ha(i),'YTick',[],'XTick',1:3600:7201, 'XTickLabel',{'0','1','2'})
-        xlabel(ha(i),'Time (hrs)')
-    end
-    
-% - - POPULATION AVERAGES - - - - 
-    figure('Position',positionfig(1000,400));
-    ha = tight_subplot(1,2,0.1 ,0.15);
-    plot((0:7200)/3600, [mean(erk1)',mean(erk2)'],'Parent',ha(1),'LineWidth',2)
-    plot((0:7200)/3600, [median(erk1)',median(erk2)'],'Parent',ha(2),'LineWidth',2)
-    for j = 1:2
-        xlabel(ha(j),'Time (hrs)')
-        ylabel(ha(j),'Phosphorylated ERK')
-        set(ha(j),'ColorOrder',cell2mat(colors.peacock'))
-        legend(ha(j),{'paired ERK/MEK', 'unpaired'},'Location','southeast')
-    end
+%     % - - - HEATMAPS - - - - - - - - - - - - 
+%     graph_lim = prctile([erk1(:);erk2(:)],[2 99]);
+%     [~,ord1] = sort(sum(erk1(:,1:400),2),'descend');
+%     [~,ord2] = sort(sum(erk2(:,1:400),2),'descend');
+%     figure('Position',positionfig(1000,400),'Name',['RasGTP: ', num2str(ras_doses(idx))]);
+%     ha = tight_subplot(1,2,0.05 ,[0.15 .1]);
+%     imagesc(erk1(ord1,:),'Parent',ha(1)), set(ha(1),'CLim',graph_lim)
+%     imagesc(erk2(ord2,:),'Parent',ha(2)), set(ha(2),'CLim',graph_lim)
+%     colormap(colormaps.viridis)
+%     title(ha(1),'Paired ERK and MEK')
+%     title(ha(2),'Unpaired')
+%     for i = 1:length(ha)
+%         set(ha(i),'YTick',[],'XTick',1:3600:7201, 'XTickLabel',{'0','1','2'})
+%         xlabel(ha(i),'Time (hrs)')
+%     end
+%     
+% % - - POPULATION AVERAGES - - - - 
+%     figure('Position',positionfig(1000,400),'Name',['RasGTP: ', num2str(ras_doses(idx))]);
+%     ha = tight_subplot(1,2,0.1 ,0.15);
+%     plot((1:size(erk1,2))/3600, [mean(erk1)',mean(erk2)'],'Parent',ha(1),'LineWidth',2)
+%     plot((1:size(erk1,2))/3600, [median(erk1)',median(erk2)'],'Parent',ha(2),'LineWidth',2)
+%     for j = 1:2
+%         xlabel(ha(j),'Time (hrs)')
+%         ylabel(ha(j),'Phosphorylated ERK')
+%         set(ha(j),'ColorOrder',cell2mat(colors.peacock'))
+%         legend(ha(j),{'paired ERK/MEK', 'unpaired'},'Location','southeast')
+%     end
 
 % - - - - - (MAX) HISTOGRAMS - - - - -
-    graph_lim = prctile([erk1(:);erk2(:)],[2 99.9]);
-    erk1(erk1>graph_lim(2)) = graph_lim(2);
-    erk2(erk2>graph_lim(2)) = graph_lim(2);
-    figure,histogram(max(erk1,[],2),linspace(0,graph_lim(2),32))
-    hold on; histogram(max(erk2,[],2),linspace(0,graph_lim(2),32))
+    
+    ovr_erk1 = sum(erk1(:,1:end),2); 
+    ovr_erk2 = sum(erk2(:,1:end),2); 
+    
+%     ovr_erk1 = mean(erk1(:,end-50:end),2); 
+%     ovr_erk2 = mean(erk2(:,end-50:end),2); 
+    graph_lim = (prctile([ovr_erk1;ovr_erk2],[1 99]));
+    
+    ovr_erk1(ovr_erk1>graph_lim(2)) = graph_lim(2);
+    ovr_erk2(ovr_erk2>graph_lim(2)) = graph_lim(2);
+    ovr_erk1(ovr_erk1<graph_lim(1)) = graph_lim(1);
+    ovr_erk2(ovr_erk2<graph_lim(1)) = graph_lim(1);
+    %erk1(erk1>graph_lim(2)) = graph_lim(2);
+    %erk2(erk2>graph_lim(2)) = graph_lim(2);
+    figure('Name',['RasGTP: ', num2str(ras_doses(idx))]),
+    hold on;
+    set(gca,'ColorOrder',[colors.lavender;colors.pam])
+    histogram(ovr_erk2,linspace(graph_lim(1),graph_lim(2),32))
+    histogram(ovr_erk1,linspace(graph_lim(1),graph_lim(2),32))
+
+    hold off
 end
 
 %%
