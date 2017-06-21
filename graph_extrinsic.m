@@ -147,19 +147,45 @@ n2 = histcounts(ovr_erk1,bins); n2 = [n2 0]/sum(n2);
 [x2, y2] = stairs(bins,n2); x2 = [x2(1); x2]; y2 = [0 ; y2];
 
 
+%%
 
 figs.AUChist = figure('Name',['RasGTP: ', num2str(ras_doses(idx))],'Position',positionfig(255,160));
 ha = tight_subplot(1,1);
 hold on;
 area(x1,y1,'FaceColor',colors.lavender,'FaceAlpha',0.9,'EdgeColor',colors.lavender/2)
 area(x2,y2,'FaceColor',colors.orange,'FaceAlpha',0.4,'EdgeColor',colors.lavender/2)
+
 hold off
 set(gca,'XLim',[min(bins)-range(bins)*0.03 max(bins)+range(bins)*0.03],'XTickLabel',{},'YTickLabel',{},...
 'YLim',[0 0.15],'YTick',0:.05:.25)
-legend({'Correlated MEK/ERK', 'Uncorrelated'})
     
     
 
-figure, 
+figs.MeanERK = figure('Name','Mean ERK','Position',positionfig(255,142));
 ha = tight_subplot(1,1);
+hold(ha(1),'on')
+set(ha(1),'ColorOrder',[colors.orange; colors.lavender])
 plot((1:size(erk1,2))/3600, [mean(erk1)',mean(erk2)'],'Parent',ha(1),'LineWidth',2)
+
+hold(ha(1),'off')
+set(ha(1),'YLim',[0 4e7])
+legend({'Correlated MEK/ERK', 'Uncorrelated'},'Location','Southeast')
+
+
+figs.dist(1) = figure('Name','Mean ERK','Position',positionfig(168,142));
+ha = tight_subplot(1,1);
+scatter(init_dist(3,:),init_dist(5,:),10,colors.grays{3},'Filled');
+hold on
+alpha(0.25)
+hold off
+set(ha(1),'XTickLabel',{},'YTickLabel',{})
+corr(init_dist(3,:)',init_dist(5,:)')
+
+figs.dist(2) = figure('Name','Mean ERK','Position',positionfig(168,142));
+ha = tight_subplot(1,1);
+scatter(init_paired(3,:),init_paired(5,:),10,colors.grays{3},'Filled');
+hold on
+alpha(0.25)
+hold off
+set(ha(1),'XTickLabel',{},'YTickLabel',{})
+corr(init_paired(3,:)',init_paired(5,:)')
