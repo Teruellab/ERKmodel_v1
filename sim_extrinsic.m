@@ -1,6 +1,6 @@
 %% Looking at extrinsic variation: 500 single-cell draws
 init_val = 22100000*(10^-0.25); % Default values for ERK/MEK molecules - adjusted to match dynamics of MF10A cells
-num = 5; % Number of simulations
+num = 1024; % Number of simulations
 sim_time = 120;
 
 %        Species   Mean       CV
@@ -32,6 +32,8 @@ erk_unpaired = zeros(num,sim_time*60+1,length(ras_doses)); % Variable to hold si
 
 % Run dose response for each individual
 for i = 1:num
+    if mod(num,10)==0; disp(['Unpaired sim, cell #', num2str(num)]); end
+
     p_mod = [];
     names = {'ERKpp'};
     options = struct;
@@ -41,6 +43,7 @@ for i = 1:num
     init_mod(:,2) = mat2cell(init_dist(:,i),ones(size(init_dist(:,1),1),1),1);
         % Simulate all doses (only need to equilibrate on first iteration)
     output = [];
+    
     for j = 1:length(ras_doses)
         if isempty(output)
             [t,x,simdata] = erkSimulate({'RasGTP',ras_doses(j)},names, p_mod, init_mod, options);
@@ -63,6 +66,7 @@ paired_dist = [sort(unpaired_dist(1,:),'ascend');sort(unpaired_dist(2,:),'ascend
 
 % Run dose response for each individual
 parfor i = 1:num
+    if mod(num,10)==0; disp(['Paired sim, cell #', num2str(num)]); end
     p_mod = [];
     names = {'ERKpp'};
     options = struct;
