@@ -4,7 +4,7 @@
 num = 1024; % Number of simulations
 sim_time = 120; % Total length of simulation (minutes)
 sim_interval = 15; % Time resoluition of simulation (seconds)
-ras_doses = exp(7:.25:11); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
+ras_doses = exp(linspace(7,12,12)); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -12,9 +12,9 @@ ras_doses = exp(7:.25:11); % Model perturbation: elevated RasGTP (should be in t
 %        Species   Mean        CV
 inits = {'Raf'     40000      .066
          'Phase1'  40000      .066
-         'MEK'     21000000   .07
+         'MEK'     22100000   .07
          'Phase2'  400000     .066
-         'ERK'     21000000*2 .06
+         'ERK'     22100000*2 .06
          'Phase3'  10000000   .066
          'Phase4'  40000      .066
 };

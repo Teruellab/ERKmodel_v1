@@ -139,7 +139,7 @@ erk2 = squeeze(erk_unpaired(:,:,idx));
     %erk1(erk1>graph_lim(2)) = graph_lim(2);
     %erk2(erk2>graph_lim(2)) = graph_lim(2);
     
-    bins = linspace(graph_lim(1),graph_lim(2),24);
+    bins = linspace(graph_lim(1),graph_lim(2),30);
    
     n1 = histcounts(ovr_erk2,bins); n1 = [n1 0]/sum(n1);
     n2 = histcounts(ovr_erk1,bins); n2 = [n2 0]/sum(n2);
@@ -149,12 +149,13 @@ erk2 = squeeze(erk_unpaired(:,:,idx));
 
     
     
-    figs.AUChist = figure('Name',['RasGTP: ', num2str(ras_doses(idx))],'Position',positionfig(341,161));
+    figs.AUChist = figure('Name',['RasGTP: ', num2str(ras_doses(idx))],'Position',positionfig(255,160));
     ha = tight_subplot(1,1);
     hold on;
     area(x1,y1,'FaceColor',colors.lavender,'FaceAlpha',0.9,'EdgeColor',colors.lavender/2)
     area(x2,y2,'FaceColor',colors.orange,'FaceAlpha',0.4,'EdgeColor',colors.lavender/2)
     hold off
     set(gca,'XLim',[min(bins)-range(bins)*0.03 max(bins)+range(bins)*0.03],'XTickLabel',{},'YTickLabel',{},...
-        'YLim',[0 0.18],'YTick',0:.05:.25)
+        'YLim',[0 0.25],'YTick',0:.05:.25)
+    legend({'Correlated MEK/ERK', 'Uncorrelated'})
     
