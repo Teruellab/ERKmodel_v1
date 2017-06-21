@@ -5,7 +5,7 @@ all_doses = exp(7:.25:10); % Model perturbation: elevated RasGTP (should be in t
 
 % Get all pairwise combinations of steady-state species
 all_species = {'Raf','Phase1','MEK','Phase2','ERK','Phase3','Phase4'};
-all_init = [40000 40000 21000000 400000 22100000 10000000 40000];
+all_init = [40000 40000 22100000 400000 22100000 10000000 40000];
 combos = nchoosek(1:length(all_init),2);
 
 

@@ -10,13 +10,13 @@ ras_doses = exp(linspace(7,11,15)); % Model perturbation: elevated RasGTP (shoul
 
 % Generate distributions for each fixed species in the model
 %        Species   Mean        CV
-inits = {'Raf'     40000      .08
-         'Phase1'  40000      .08
-         'MEK'     22100000   .08
-         'Phase2'  400000     .08
-         'ERK'     22100000*2 .08
-         'Phase3'  10000000   .08
-         'Phase4'  40000      .08
+inits = {'Raf'     40000      .1
+         'Phase1'  40000      .1
+         'MEK'     21000000   .1
+         'Phase2'  400000     .1
+         'ERK'     22100000*2 .1
+         'Phase3'  10000000   .1
+         'Phase4'  40000      .1
 };
 init_dist = [];
 for i = 1:size(inits,1)
