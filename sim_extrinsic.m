@@ -1,22 +1,22 @@
 %% Looking at extrinsic variation: multiple single-cell draws with log-normally distributed behavior
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-num = 1024; % Number of simulations
+num = 2048; % Number of simulations
 sim_time = 120; % Total length of simulation (minutes)
 sim_interval = 15; % Time resoluition of simulation (seconds)
-ras_doses = exp(linspace(7,12,12)); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
+ras_doses = exp(linspace(7,11,15)); % Model perturbation: elevated RasGTP (should be in the neighborhood of 2000-20000 molecules)
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
 % Generate distributions for each fixed species in the model
 %        Species   Mean        CV
-inits = {'Raf'     40000      .06
-         'Phase1'  40000      .06
-         'MEK'     22100000   .06
-         'Phase2'  400000     .06
-         'ERK'     22100000*2 .06
-         'Phase3'  10000000   .06
-         'Phase4'  40000      .06
+inits = {'Raf'     40000      .08
+         'Phase1'  40000      .08
+         'MEK'     22100000   .08
+         'Phase2'  400000     .08
+         'ERK'     22100000*2 .08
+         'Phase3'  10000000   .08
+         'Phase4'  40000      .08
 };
 init_dist = [];
 for i = 1:size(inits,1)

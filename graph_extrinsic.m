@@ -55,9 +55,8 @@ for idx = 1:size(erk_paired,3)
     %erk2(erk2>graph_lim(2)) = graph_lim(2);
     figure('Name',['RasGTP: ', num2str(ras_doses(idx))]),
     hold on;
-    set(gca,'ColorOrder',[colors.lavender;colors.pam])
-    histogram(ovr_erk2,linspace(graph_lim(1),graph_lim(2),32))
     histogram(ovr_erk1,linspace(graph_lim(1),graph_lim(2),32))
+    histogram(ovr_erk2,linspace(graph_lim(1),graph_lim(2),32))
 
     hold off
 end
