@@ -25,7 +25,7 @@ for i = 1:length(doses)
         options.STEADY_STATE = simdata.STEADY_STATE;
         [~,x] = erkSimulate({'RasGTP',doses(i)}, names, p_mod, init_mod,options);
     end
-    output = cat(3,output,x);
+    output = cat(3,output,x); 
 end
 
 % Main model output: doubly-phosphorylated ERK

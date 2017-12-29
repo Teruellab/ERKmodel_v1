@@ -75,8 +75,5 @@ for z = 1:size(combos,1)
         end
         erk(i,:,:) = output;
     end
-    all_erk_paired{z} = erk;
-
-    
-    
+    all_erk_paired{z} = erk;    
 end
